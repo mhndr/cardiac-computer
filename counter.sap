@@ -1,0 +1,14 @@
+n		DATA	099
+cntr	DATA	000
+one		DATA	001
+loop	CLA		n
+        TAC		exit
+        OUT		cntr	
+        CLA		cntr
+        ADD		one
+        STO		cntr
+        CLA		n
+        SUB		one
+        STO		n
+        JMP		loop
+exit	HRS		00
