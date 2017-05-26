@@ -26,7 +26,7 @@
 			-ess table
 				Eg:
 				addr = count + instr_count + 1
-				data_table["A"] = addr
+				literal_table["A"] = addr
 				address_table[addr] = symbol_val
 				sym_count++
 		    And also decode instruction
@@ -36,7 +36,7 @@
 				if digit(field[1])
 					addr = field[1]
 				else
-					addr = data_table[field[1]]	  						
+					addr = literal_table[field[1]]	  						
 				then join both
 				instr = op*100 + addr
 
@@ -67,14 +67,18 @@ opcode_table = {"INP":'0',
 				"JMP":'8', 
 				"HRS":'9'}
  
-data_table = {} # data symbol:address
+literal_table = {} # data symbol:address
 symbol_table = {} # symbol:address
 address_table ={} # address:value
 instruction_count = 0
-data_count = 0
+literal_count = 0
 symbol_count = 0
 
-with open("code.sap","r") as f:
+if len(sys.argv) < 2:
+	print "No file given to execute"
+	sys.exit(-1)
+	
+with open(sys.argv[1],"r") as f:
 	lines= f.readlines()
 
 #collect all symbols
@@ -84,9 +88,9 @@ for i,line in enumerate(lines):
 		if len(fields) == 3:
 			symbol = fields[0]
 			val    = fields[2]
-			data_table[symbol] = data_count
+			literal_table[symbol] = literal_count
 			address_table[i] = val
-			data_count += 1
+			literal_count += 1
 		else:
 			print "Error, Unrecognised Data definition, Line:",i
 	else:
@@ -99,12 +103,12 @@ for i,line in enumerate(lines):
 
 			instruction_count += 1
 
-for i in data_table:
-	data_table[i]=  str(data_table[i]+instruction_count)
+for i in literal_table:
+	literal_table[i]=  str(literal_table[i]+instruction_count)
 
 
 #assemble
-for i ,line in enumerate(lines[data_count:]):
+for i ,line in enumerate(lines[literal_count:]):
 	if not line.strip():
 		continue #empty line
 	fields 	= line.split()
@@ -121,8 +125,8 @@ for i ,line in enumerate(lines[data_count:]):
 
 
 	if not addr.isdigit():
-		if addr in data_table.keys():
-			addr = data_table[addr]
+		if addr in literal_table.keys():
+			addr = literal_table[addr]
 		elif addr in symbol_table.keys():	
 			addr = symbol_table[addr]		
 		else:
