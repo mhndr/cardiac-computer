@@ -1,5 +1,6 @@
 """
 	This is an assembler for the Cardiac Computer 
+	https://www.cs.drexel.edu/~bls96/museum/cardiac.html
 
 	Syntax:
 		<Label> <DATA> instruction/literal
